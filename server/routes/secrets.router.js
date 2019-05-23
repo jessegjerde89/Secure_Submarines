@@ -7,8 +7,7 @@ router.get('/', rejectUnauthenticated, (req, res) => {
     // Send back user object from the session (previously queried from the database)
     res.send(req.user);
     console.log('req.user:', req.user);
-    let queryText = `SELECT "content" FROM "secret" WHERE "secret"."secrecy_level" >= "user"."clearance_level" ;` 
-    pool.query(queryText)
+    pool.query(`SELECT * FROM "secret" WHERE "secrecy_level" >= $1 `, [req.user.clearance_level]);
         .then(results => res.send(results.rows))
         .catch(error => {
             console.log('Error making SELECT for secrets:', error);
